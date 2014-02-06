@@ -26,6 +26,10 @@
         "drone": "scripts/drone"
     },
 
+    "bin": {
+        "larry": "bin/larry"
+    },
+
     "jshintConfig": {
         "bitwise": false,
         "camelcase": true,
