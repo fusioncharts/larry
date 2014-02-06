@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+var program = require("commander"),
+    packagejson = require("../package.json"),
+    core = require("../src/core");
+
+/**
+ * Describe program
+ */
+program
+    .version(packagejson.version)
+    .option("-c, --config [path]", "Path to JSON configuration file. Default './larry.json' in the current directory.", "./larry.json")
+    .parse(process.argv);
+
+/**
+ * Call cli() of core with the parsed values
+ */
+core.cli(program);

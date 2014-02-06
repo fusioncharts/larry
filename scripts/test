@@ -1,0 +1,33 @@
+#!/bin/bash
+# --------------------------------------------------------------------------------------------
+# This script tests the code of Larry to ensure the code is not broken. It runs JSHint to trap
+# syntax and style errors, and then runs test cases on Jasmine-node.
+# --------------------------------------------------------------------------------------------
+
+# The script should break on error.
+set -e
+
+# At the beginning a short message is given to inform that test has started.
+echo -e "Testing has begun. Sit back and relax. Come back if you see some errors!\n";
+
+# Beginning to run JSHint
+echo -e "\033[32mRunning JSHint...\033[0m";
+jshint -v
+jshint ./src
+echo -e "\033[32m[PASS] Finished JSHint\033[0m\n";
+
+# Beginning to run Jasmine-node
+echo -e "\033[32mRunning Jasmine-node...\033[0m";
+jasmine-node --version
+jasmine-node ./tests -m ".*-spec\.js"
+echo -e "\033[32m[PASS] Finished Jasmine-node\033[0m\n";
+
+# Test if Larry binary is executible
+# TODO: Move this to a Jasmine-node test case
+echo -e "\033[32mRunning Larry...\033[0m\n";
+./bin/larry --version
+./bin/larry --help
+
+
+# Everything has passed, "hee haw!"
+echo -e "\n\033[032m[OK!] Everything passed! Hee haw!\033[0m\n";

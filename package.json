@@ -1,0 +1,76 @@
+{
+    "name": "larry",
+    "description": "A packaging tool for bundling project releases",
+    "version": "0.0.1",
+
+    "dependencies": {
+        "commander": "~2.1.0",
+        "underscore": "~1.5.2",
+        "ncp": "~0.5.0",
+        "mkdirp": "~0.3.5",
+        "walkdir": "~0.0.7"
+    },
+
+    "repository": {
+        "type": "git",
+        "url": "https://bitbucket.org/fusioncharts/larry.git"
+    },
+
+    "devDependencies": {
+        "jshint": "~2.4.1",
+        "jasmine-node": "~1.12.0"
+    },
+
+    "scripts": {
+        "test": "scripts/test",
+        "drone": "scripts/drone"
+    },
+
+    "jshintConfig": {
+        "bitwise": false,
+        "camelcase": true,
+        "curly": true,
+        "eqeqeq": false,
+        "es3": false,
+        "forin": false,
+        "freeze": true,
+        "immed": true,
+        "indent": 4,
+        "latedef": true,
+        "newcap": true,
+        "noarg": true,
+        "noempty": false,
+        "nonew": false,
+        "plusplus": false,
+        "quotmark": "double",
+        "undef": true,
+        "unused": true,
+        "trailing": false,
+        "asi": false,
+        "boss": true,
+        "debug": false,
+        "eqnull": true,
+        "evil": false,
+        "expr": true,
+        "funcscope": false,
+        "globalstrict": false,
+        "iterator": false,
+        "lastsemic": false,
+        "laxbreak": false,
+        "laxcomma": false,
+        "loopfunc": false,
+        "multistr": false,
+        "notypeof": false,
+        "proto": false,
+        "scripturl": false,
+        "smarttabs": false,
+        "shadow": false,
+        "sub": false,
+        "supernew": false,
+        "browser": false,
+        "devel": false,
+        "node": true,
+        "globals": {}
+    }
+
+}

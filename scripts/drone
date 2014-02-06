@@ -1,0 +1,36 @@
+#!/bin/bash
+# ----------------------------------------------------------------------------------------------------
+# This script is executed by drone.io. All other scripts will be invoked as part of this script.
+#
+# This script is trigged through post-commit hook. So any new commit will trigger a build on drone.io
+# using this script.
+# ----------------------------------------------------------------------------------------------------
+
+# Stop on first error
+set -e
+
+# Check if the environment is drone
+if [ "${DRONE}" != true ]; then
+    echo "Was expecting DRONE."
+    exit 1
+fi
+
+# If build ID is not present, then it is an error
+if [ -z "${BUILD_ID}" ]; then
+    echo "Expecting BUILD_ID"
+    exit 1
+fi
+
+# Install the testing environment (if not already)
+git submodule update --init --recursive
+npm -d install
+
+# ------------------------------------------------------------------------------------------------------
+# Everything ready. Now test
+# ------------------------------------------------------------------------------------------------------
+
+npm test
+
+# ------------------------------------------------------------------------------------------------------
+echo -e "\n\033[32mBuilt is done. Go have a beer!\033[0m";
+# ------------------------------------------------------------------------------------------------------
