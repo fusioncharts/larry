@@ -1,6 +1,6 @@
 # Larry #
 
-[![Build Status](drone-badge)](https://drone.io/bitbucket.org/fusioncharts/larry/latest)
+[![Build Status][drone-badge]](https://drone.io/bitbucket.org/fusioncharts/larry/latest)
 
 Larry is a generic packaging tool for applications that need to bundle their source code in packages, ready to be shipped.
 
