@@ -20,13 +20,11 @@ program
 
 //Initializing objects
 
-var schemaFile = __dirname+"/larry.schema.json",
-    configFile = program.args[0] || __dirname+"/../config/takeaway.json",
+var schemaFile = __dirname+"/../src/larry.schema.json",
+    configFile = program.args[0] || __dirname+"/../config/larry.json",
     fs = require("fs"),
     config = fs.readFileSync(path.resolve(configFile)).toString(),
-    schema = fs.readFileSync(schemaFile).toString(),
-//require() needs relative path from the script inclusion
-    takeaway = require("../lib/core.js"),
+    schema = fs.readFileSync(path.resolve(schemaFile)).toString(),
     package,
     componentsVerificationCode,
     packagesVerificationCode,
@@ -34,7 +32,7 @@ var schemaFile = __dirname+"/larry.schema.json",
 
 console.log("=>Packaging started...");
 
-package = new takeaway(config, schema);
+package = new core(config, schema);
 
 //Constructor verifies if the configuration is conforming to the schema in lib/package.conf.schema
 
