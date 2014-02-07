@@ -2,7 +2,7 @@
 
 //Initializing objects
 
-var schemaFile = __dirname+"/../lib/larry.schema.json",
+var schemaFile = __dirname+"/larry.schema.json",
     configFile = process.argv[2] || __dirname+"/../config/takeaway.json",
     fs = require("fs"),
     config = fs.readFileSync(configFile).toString(),

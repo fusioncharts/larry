@@ -24,6 +24,7 @@ fi
 # Install the testing environment (if not already)
 git submodule update --init --recursive
 npm -d install
+sudo apt-get install libzip-dev
 
 # ------------------------------------------------------------------------------------------------------
 # Everything ready. Now test

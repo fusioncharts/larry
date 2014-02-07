@@ -2,7 +2,7 @@
 
 var program = require("commander"),
     packagejson = require("../package.json"),
-    core = require("../lib/core");
+    core = require("../src/lib");
 
 /**
  * Describe program

@@ -2,12 +2,11 @@
 
 //Declaring fs, shell and self(used to store config and schema) variables to be accessed globally.
 
-var fs = require('fs'),
-    ncp = require('ncp').ncp,
-    path = require('path'),
-    mkdirp = require('mkdirp'),
+var fs = require("fs"),
+    ncp = require("ncp").ncp,
+    path = require("path"),
+    mkdirp = require("mkdirp"),
     projectPath =path.resolve(),
-    walk = require('walkdir'),
     source,
     destination,
     schemaValidator = require("JSV").JSV,
@@ -38,11 +37,6 @@ var larry = function(config, schema) {
     self.config = JSON.parse(config);
     self.schema = JSON.parse(schema);
 
-    //Freeing up objects that are not needed anymore.
-
-    delete schema;
-    delete config;
-
     schemaValidatorLog = schemaValidatorEnv.validate(self.config,self.schema);
 
     //1. Reporting schema validation results
@@ -57,10 +51,6 @@ var larry = function(config, schema) {
     else {
         console.log("->Error: Basic schema validation not passed");
         console.log(schemaValidatorLog.errors);
-
-        //Freeing up variables that are not needed anymore.
-
-        delete self;
 
         //Exit code 1, indicating error and stopping further execution
 
@@ -124,7 +114,7 @@ larry.prototype = {
 
             //1. Verifying if package names are valid
 
-            if(component.name != "" && component.name != undefined){
+            if(component.name !== "" && component.name !== undefined){
                 console.log("->Success: Package name is valid for "+component.name);
             }
             else{
@@ -146,7 +136,7 @@ larry.prototype = {
 
             //3. Verifying if the component names are all unique
 
-            if(component.name != undefined && component.name != "" && (componentsList.indexOf(component.name) == -1)){
+            if(component.name !== undefined && component.name !== "" && (componentsList.indexOf(component.name) == -1)){
                 componentsList.push(component.name);
             }
             else{
@@ -197,7 +187,7 @@ larry.prototype = {
 
             //1. Verifying if package names are valid
 
-            if(package.name != "" && package.name != undefined){
+            if(package.name !== "" && package.name !== undefined){
                 console.log("->Success: Package name is valid for "+package.name);
             }
             else{
@@ -210,7 +200,7 @@ larry.prototype = {
             //2. Verifying if packages contain valid component names
 
             for(packageIterator in package.components){
-                if(componentsList.indexOf(package.components[packageIterator]) != -1){
+                if(componentsList.indexOf(package.components[packageIterator]) !== -1){
                     console.log("->Success: Valid component found in "+package.name);
                     console.log("Component name: "+package.components[packageIterator]);
                 }
@@ -270,8 +260,8 @@ larry.prototype = {
             componentRecursive,
             componentEnabled,
             excludePattern,
-            excludeIndex,
-            exclude,
+            //excludeIndex,
+            //exclude,
             options = {};
 
         //Loop through enabled packages
@@ -297,12 +287,12 @@ larry.prototype = {
 
             //Copy the components to out/package
 
-            //Below for loop iterates through package's components array
+            //Below for loop iterates through package"s components array
 
             for(componentIterator in package.components){
                 componentName = package.components[componentIterator];
 
-                //Loop through each component and it's properties
+                //Loop through each component and it"s properties
 
                 for (index in components) {
                     if (components[index].name == componentName) {
@@ -320,13 +310,13 @@ larry.prototype = {
                             componentRecursive = components[index].recursive;
                         }
 
-                        if(componentEnabled == false){
+                        if(componentEnabled === false){
                             console.log("->Error: Disabled component "+components[index].name+" was used in the package "+package.name);
                             return 1;
                         }
 
 
-                        if(excludePattern != undefined){
+                        if(excludePattern !== undefined){
                             options.filter = components[index].excludePattern;
                         }
 
@@ -339,6 +329,7 @@ larry.prototype = {
                             console.log(source);
                             console.log(destination);
                             ncp(source,destination);
+                            /*
                             ncp(source+"/", destination+"/", options, function(err){
                                 if(err == null){
                                     console.log("Copy success");
@@ -349,6 +340,7 @@ larry.prototype = {
                                     console.log(err);
                                 }
                             });
+                            */
                         }
                     }
                 }
@@ -368,7 +360,7 @@ larry.prototype = {
     }
 
 
-}
+};
 
 larry.prototype.constructor = larry;
 module.exports = larry;
