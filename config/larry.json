@@ -1,0 +1,40 @@
+{
+    "options": {
+        "output": "./out/",
+        "input": "",
+        "archive": true
+    },
+    "components": [
+        {
+            "name": "fornpm",
+            "include": [
+                "lib/",
+                "src/"
+                ],
+            "destination": [
+                "lib/plop",
+                "src/kmkm"
+            ],
+            "recursive": true
+        }
+    ],
+    "packages": [
+        {
+            "name": "larry",
+            "enabled": true,
+            "components": [
+                "fornpm"
+            ],
+            "archive": true
+        },
+
+        {
+            "name": "larry2",
+            "enabled": false,
+            "components": [
+                "fornpm"
+            ],
+            "archive": true
+        }
+    ]
+}
