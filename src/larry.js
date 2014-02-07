@@ -4,14 +4,12 @@
 
 var schemaFile = __dirname+"/../lib/larry.schema.json",
     configFile = process.argv[2] || __dirname+"/../config/takeaway.json",
-    fs = require('fs'),
-    shell = require('shelljs'),
+    fs = require("fs"),
     config = fs.readFileSync(configFile).toString(),
     schema = fs.readFileSync(schemaFile).toString(),
     //require() needs relative path from the script inclusion
-    takeaway = require('../lib/core.js'),
+    takeaway = require("../lib/core.js"),
     package,
-    constructorCode,
     componentsVerificationCode,
     packagesVerificationCode,
     packagingStatus;
