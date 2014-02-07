@@ -17,3 +17,5 @@ Parameter             | Description
 `-c, --config [path]` | Path to JSON configuration file. Default './larry.json' in the current directory.
 
 [drone-badge]: https://drone.io/bitbucket.org/fusioncharts/larry/status.png
+
+### Configuration file ###
