@@ -259,7 +259,7 @@ larry.prototype = {
             componentRecursive,
             componentEnabled,
             excludePattern,
-            includePattern;
+            includePattern,
             //zipfile = {};
             //excludeIndex,
             //exclude,
@@ -324,8 +324,8 @@ larry.prototype = {
                             preserveFiles: false,
                             preserveTimeStamps: false,
                             inflateSymlinks: false,
-                            include: components[index].includePattern == "" ? undefined : components[index].includePattern,
-                            exclude: components[index].excludePattern == "" ? undefined : components[index].excludePattern
+                            include: components[index].includePattern === "" ? undefined : components[index].includePattern,
+                            exclude: components[index].excludePattern === "" ? undefined : components[index].excludePattern
                         };
 
                         for(cpindex in components[index].include){
