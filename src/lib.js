@@ -3,11 +3,9 @@
 //Declaring fs, shell and self(used to store config and schema) variables to be accessed globally.
 
 var fs = require("fs"),
-    ncp = require("ncp").ncp,
-    //wrench = require("wrench"),
-    //zipper = require("zipper").Zipper,
+    wrench = require("wrench"),
+    Zip = require("adm-zip"),
     path = require("path"),
-    mkdirp = require("mkdirp"),
     projectPath =path.resolve(),
     source,
     destination,
@@ -265,7 +263,7 @@ larry.prototype = {
             //zipfile = {};
             //excludeIndex,
             //exclude,
-            //options = {};
+            filterOptions = {};
 
         //Loop through enabled packages
 
@@ -277,7 +275,7 @@ larry.prototype = {
 
             console.log("Package: "+package.name);
 
-            mkdirp(path.join(projectPath,self.config.options.output,package.name));
+            wrench.mkdirSyncRecursive(path.join(projectPath,self.config.options.output,package.name));
             console.log("->Success: Output folder was created "+path.join(projectPath,self.config.options.output,package.name));
 
             //Copy the components to out/package
@@ -320,46 +318,35 @@ larry.prototype = {
                             includePattern = components[index].includePattern;
                         }
 
+                        filterOptions = {
+                            forceDelete: true,
+                            excludeHiddenUnix: false,
+                            preserveFiles: false,
+                            preserveTimeStamps: false,
+                            inflateSymlinks: false,
+                            include: components[index].includePattern == "" ? undefined : components[index].includePattern,
+                            exclude: components[index].excludePattern == "" ? undefined : components[index].excludePattern
+                        };
+
                         for(cpindex in components[index].include){
                             source = path.join(self.config.options.input,components[index].include[cpindex]);
                             destination = path.join(self.config.options.output,package.name,components[index].destination[cpindex]);
-                            mkdirp.sync(destination);
+                            wrench.mkdirSyncRecursive(destination);
                             source = path.resolve(source);
                             destination = path.resolve(destination);
                             console.log(source);
                             console.log(destination);
-
-                            /*
-                            wrench.copyDirSyncRecursive(source, destination,{
-                                exclude: excludePattern,
-                                include: includePattern
-                            });
-                            */
-
-
-                            ncp(source,destination);
-                            /*
-                            ncp(source+"/", destination+"/", options, function(err){
-                                if(err == null){
-                                    console.log("Copy success");
-                                    console.log(err);
-                                }
-                                else{
-                                    console.log("Copy error copying "+source+" to "+destination);
-                                    console.log(err);
-                                }
-                            });
-                            */
-
+                            wrench.copyDirSyncRecursive(source, destination, filterOptions);
                         }
                     }
                 }
             }
 
             //Start zipping packages here
-
-            //zipfile = new zipper(path.join(self.config.options.output,package.name+".zip"));
-            //zipfile.addfile(destination);
+            var archive = new Zip();
+            archive.addLocalFolder(path.resolve(self.config.options.output,package.name));
+            archive.writeZip(path.resolve(self.config.options.output)+"/"+package.name+".zip");
+            wrench.rmdirSyncRecursive(path.resolve(self.config.options.output,package.name));
         }
 
 
