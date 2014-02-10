@@ -86,6 +86,10 @@
                     "type":"string",
                     "required":false
                 },
+                "baseOutputDir": {
+                    "type": "string",
+                    "required": true
+                },
                 "output": {
                     "type":"string",
                     "required":false
@@ -154,6 +158,10 @@
 
                                 }
                             }
+                        },
+                        "archiveRoot": {
+                            "type": "string",
+                            "required": false
                         }
                     }
                 }
