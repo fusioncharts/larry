@@ -3,7 +3,7 @@
 var program = require("commander"),
     path = require("path"),
     packagejson = require("../package.json"),
-    core = require("../src/lib");
+    core = require("../src/core");
 
 
 /**
@@ -11,102 +11,10 @@ var program = require("commander"),
  */
 program
     .version(packagejson.version)
-    .option("-c, --config [path]", "Path to JSON configuration file. Default '../config/larry.json' in the current directory.", "./larry.json")
+    .option("-c, --config [path]", "Path to JSON configuration file. Default '../config/larry.json' in the current directory.")
     .parse(process.argv);
 
 /**
  * Call cli() of core with the parsed values
  */
-
-//Initializing objects
-
-var schemaFile = __dirname+"/../src/larry.schema.json",
-    configFile = program.args[0] || __dirname+"/../config/larry.json",
-    fs = require("fs"),
-    config = fs.readFileSync(path.resolve(configFile)).toString(),
-    schema = fs.readFileSync(path.resolve(schemaFile)).toString(),
-    package,
-    componentsVerificationCode,
-    packagesVerificationCode,
-    packagingStatus;
-
-console.log("=>Packaging started...");
-
-package = new core(config, schema);
-
-//Constructor verifies if the configuration is conforming to the schema in lib/package.conf.schema
-
-
-switch(package.constructorCode){
-    case 0:
-        console.log("=>Success: Config validation and verification passed");
-        break;
-    case 1:
-        console.log("=>Error: Config validation and verification not passed");
-        process.exit(1);
-        break;
-    case 2:
-        console.log("=>Error: Config options.input is not a valid path");
-        process.exit(1);
-        break;
-    case 3:
-        console.log("=>Error: Config options.output is not a valid path");
-        process.exit(1);
-        break;
-    default:
-        console.log("=>Exiting: Unknown error");
-}
-
-
-//Create an instance of the takeaway class
-
-
-
-//Start verifying components and packages
-
-componentsVerificationCode = package.verifyComponents();
-
-switch(componentsVerificationCode){
-    case 0:
-        console.log("=>Success: All components are verified");
-        break;
-    case 1:
-        console.log("=>Error: One of the component do not have a valid name");
-        process.exit(1);
-        break;
-    case 2:
-        console.log("=>Error: source/destination path do not exist for a component");
-        process.exit(1);
-        break;
-    case 3:
-        console.log("=>Error: Some components names are reused");
-        process.exit(1);
-        break;
-    case 4:
-        console.log("=>Error: include and destination count do not match for a component");
-        process.exit(1);
-        break;
-}
-
-packagesVerificationCode = package.verifyPackages();
-
-switch(packagesVerificationCode){
-    case 0:
-        console.log("=>Success: All packages are verified");
-        break;
-    case 1:
-        console.log("=>Error: One of the packages do not have a valid name");
-        process.exit(1);
-        break;
-    case 2:
-        console.log("=>Error: One of the packages do not have valid components");
-        process.exit(1);
-        break;
-    case 3:
-        console.log("=>Error: Duplicate package names found");
-        process.exit(1);
-        break;
-}
-
-
-packagingStatus = package.startPackaging();
+core.cli(program);

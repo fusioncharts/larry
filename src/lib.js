@@ -4,6 +4,8 @@
 
 var fs = require("fs"),
     ncp = require("ncp").ncp,
+    //wrench = require("wrench"),
+    //zipper = require("zipper").Zipper,
     path = require("path"),
     mkdirp = require("mkdirp"),
     projectPath =path.resolve(),
@@ -20,7 +22,6 @@ var fs = require("fs"),
 //Main class "larry" definition.
 
 var larry = function(config, schema) {
-
     /*
      * Constructor method
      * Things this will do:
@@ -260,9 +261,11 @@ larry.prototype = {
             componentRecursive,
             componentEnabled,
             excludePattern,
+            includePattern;
+            //zipfile = {};
             //excludeIndex,
             //exclude,
-            options = {};
+            //options = {};
 
         //Loop through enabled packages
 
@@ -272,24 +275,17 @@ larry.prototype = {
                 continue;
             }
 
+            console.log("Package: "+package.name);
+
             mkdirp(path.join(projectPath,self.config.options.output,package.name));
             console.log("->Success: Output folder was created "+path.join(projectPath,self.config.options.output,package.name));
-            /*, function(err){
-                if(err) {
-                    console.log("->Error: The output package folder cannot be created. Check project file permissions. "+path.join(projectPath,self.config.options.output,package.name));
-                    return 1;
-                }
-                else {
-                    console.log("->Success: Output folder was created "+projectPath,self.config.options.output,package.name);
-                }
-            });
-            */
 
             //Copy the components to out/package
 
             //Below for loop iterates through package"s components array
 
             for(componentIterator in package.components){
+                console.log("hi");
                 componentName = package.components[componentIterator];
 
                 //Loop through each component and it"s properties
@@ -316,8 +312,12 @@ larry.prototype = {
                         }
 
 
-                        if(excludePattern !== undefined){
-                            options.filter = components[index].excludePattern;
+                        if(components[index].excludePattern !== undefined){
+                            excludePattern = components[index].excludePattern;
+                        }
+
+                        if(components[index].includePattern !== undefined){
+                            includePattern = components[index].includePattern;
                         }
 
                         for(cpindex in components[index].include){
@@ -328,6 +328,15 @@ larry.prototype = {
                             destination = path.resolve(destination);
                             console.log(source);
                             console.log(destination);
+
+                            /*
+                            wrench.copyDirSyncRecursive(source, destination,{
+                                exclude: excludePattern,
+                                include: includePattern
+                            });
+                            */
+
+
                             ncp(source,destination);
                             /*
                             ncp(source+"/", destination+"/", options, function(err){
@@ -341,6 +350,7 @@ larry.prototype = {
                                 }
                             });
                             */
+
                         }
                     }
                 }
@@ -348,12 +358,14 @@ larry.prototype = {
 
             //Start zipping packages here
 
+            //zipfile = new zipper(path.join(self.config.options.output,package.name+".zip"));
+            //zipfile.addfile(destination);
         }
 
 
 
 
-        //Return 0 for successful verification of components
+        //Return 0 when packaging is done
 
         return 0;
 
