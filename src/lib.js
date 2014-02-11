@@ -6,8 +6,6 @@ var fs = require("fs"),
     wrench = require("wrench"),
     Zip = require("adm-zip"),
     path = require("path"),
-    sys = require("sys"),
-    exec = require("child_process").exec,
     projectPath =path.resolve(),
     source,
     destination,
@@ -261,9 +259,8 @@ larry.prototype = {
             zipPackage,
             toExclude = [],
             destinationRoot,
-            filterOptions = {},
-            prepackageIndex,
-            postPackageIndex;
+            filterOptions = {};
+
 
         //Loop through enabled packages
 
@@ -271,22 +268,6 @@ larry.prototype = {
             package = packages[packageIndex];
             if(!(package.enabled)){
                 continue;
-            }
-
-            //Executing pre packaging scripts
-            var callback = function (error, stdout, stderr) {
-                sys.print(stdout);
-                sys.print(stderr);
-                if (error !== null) {
-                    console.log("->Error: Running prepackaging script "+path.join(package.prepackage[prepackageIndex])+" "+ error);
-                    process.exit(1);
-                }
-            };
-
-            if(Object.prototype.toString.call(package.prepackage) === "[object array]"){
-                for(prepackageIndex in package.prepackage){
-                    child = exec("./"+path.join(package.prepackage[prepackageIndex]), callback(error, stdout, stderr));
-                }
             }
 
             console.log("Package: "+package.name);
@@ -393,21 +374,6 @@ larry.prototype = {
             }
             else {
                 console.log("->Success: Package created. Not zipping "+package.name);
-            }
-        }
-
-        //Executing post packaging scripts
-
-        if(Object.prototype.toString.call(package.postpackage) === "[object array]"){
-            for(postpackageIndex in package.postpackage){
-                child = exec("./"+path.join(package.postpackage[prepackageIndex]), function (error, stdout, stderr) {
-                    sys.print(stdout);
-                    sys.print(stderr);
-                    if (error !== null) {
-                        console.log('->Error: Running prepackaging script '+path.join(package.postpackage[prepackageIndex])+" "+ error);
-                        process.exit(1);
-                    }
-                });
             }
         }
 
