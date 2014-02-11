@@ -257,6 +257,8 @@ larry.prototype = {
             excludePattern,
             includePattern,
             zipPackage,
+            toExclude = [],
+            toExcludeIndex,
             destinationRoot,
             filterOptions = {};
 
@@ -319,12 +321,10 @@ larry.prototype = {
                             preserveFiles: false,
                             preserveTimeStamps: false,
                             inflateSymlinks: false,
-                            //includePattern is working only at 1 level, inner folders are being ignored.
-                            include: components[index].includePattern === "" ? undefined : components[index].includePattern,
                             exclude: components[index].excludePattern === "" ? undefined : components[index].excludePattern
                         };
 
-
+                        toExclude = components[index].exclude;
 
                         for(cpindex in components[index].include){
                             source = path.join(self.config.options.input,components[index].include[cpindex]);
@@ -333,10 +333,14 @@ larry.prototype = {
                             source = path.resolve(source);
                             destination = path.resolve(destination);
                             wrench.copyDirSyncRecursive(source, destination, filterOptions);
+
                         }
+
                     }
                 }
             }
+
+            //Small logical block to check if packaging needs to be done, by default zipPackage is true if not specifically defined in options.
 
             if(typeof self.config.options.archive === "undefined"){
                 if(typeof package.archive === "undefined"){
@@ -356,6 +360,7 @@ larry.prototype = {
             }
 
             //Start zipping packages here
+
             if(typeof zipPackage !== "boolean"){
                 process.exit(1);
                 console.log("->Error: archive true/false option for package "+package.name+" is not valid");

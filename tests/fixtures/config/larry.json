@@ -1,6 +1,5 @@
 {
     "options": {
-        "baseOutputDir": "./",
         "output": "./tests/artefacts",
         "input": "",
         "archive": true
@@ -9,14 +8,14 @@
         {
             "name": "component-1",
             "include": [
-                "node_modules/",
-                "src"
+                "src",
+                "node_modules/"
                 ],
             "destination": [
-                "bin/ok",
-                "files/src"
+                "bin",
+                "files"
             ],
-            "exlude": [
+            "exclude": [
                 "node_modules/commander",
                 "node_modules/jamsmine-node/LICENSE"
             ],
@@ -27,12 +26,10 @@
         {
             "name": "component-2",
             "include": [
-                "node_modules/",
                 "src"
             ],
             "destination": [
-                "bin2/ok",
-                "files2/src"
+                "files"
             ],
             "recursive": true
         }
@@ -44,16 +41,15 @@
             "components": [
                 "component-1"
             ],
-            "archiveRoot": "package1",
-            "archive": true
+            "archiveRoot": "package1"
         },
 
         {
             "name": "p2",
             "enabled": true,
             "components": [
-                "component-1",
-                "component-2"
+                "component-2",
+                "component-1"
             ],
             "archive": false
         }
