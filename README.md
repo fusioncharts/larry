@@ -54,7 +54,6 @@ Key                   | Description
 `description`         | A description of the component.
 `include`             | An array of paths to be included, relative to `options.input`.
 `destination`         | An array of destination paths corresponding to items in `include`.
-`exclude`             | An array of paths to be excluded within the `include`.
 `excludePattern`      | A regex string. Files matching this regex string will be excluded.
 `enabled`             | If `false`, disables the component. Default `true`.
 
@@ -72,10 +71,6 @@ A sample `components` object will look like:
             "destination": [
                 "bin/ok",
                 "files/src"
-            ],
-            "exlude": [
-                "node_modules/commander",
-                "node_modules/jamsmine-node/LICENSE"
             ],
             "excludePattern": ".*\\.json"
         },
@@ -138,6 +133,7 @@ A sample `packages` object will look like:
 ## Roadmap ##
 
  - Add support for `includePattern` in components.
+ - Add support to exclude files or folders by path in components.
  - Add preprocess and postprocess hook support for packages.
  - Add package verification support after they have been created.
 
