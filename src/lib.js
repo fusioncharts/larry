@@ -42,10 +42,6 @@ var larry = function(config, schema) {
 
     if (schemaValidatorLog.errors.length === 0) {
         console.log("->Success: Basic schema validation passed");
-
-        //Freeing up objects that are not needed anymore.
-
-        delete self.schema;
     }
     else {
         console.log("->Error: Basic schema validation not passed");
@@ -260,9 +256,8 @@ larry.prototype = {
             componentEnabled,
             excludePattern,
             includePattern,
-            //zipfile = {};
-            //excludeIndex,
-            //exclude,
+            zipPackage,
+            destinationRoot,
             filterOptions = {};
 
         //Loop through enabled packages
@@ -275,15 +270,15 @@ larry.prototype = {
 
             console.log("Package: "+package.name);
 
-            wrench.mkdirSyncRecursive(path.join(projectPath,self.config.options.output,package.name));
-            console.log("->Success: Output folder was created "+path.join(projectPath,self.config.options.output,package.name));
+            if(typeof package.archiveRoot === "undefined" || package.archiveRoot === ""){
+                destinationRoot = path.join(self.config.options.output,package.name);
+            }
+            else {
+                destinationRoot = path.join(self.config.options.output,package.name,package.archiveRoot);
+            }
 
-            //Copy the components to out/package
-
-            //Below for loop iterates through package"s components array
 
             for(componentIterator in package.components){
-                console.log("hi");
                 componentName = package.components[componentIterator];
 
                 //Loop through each component and it"s properties
@@ -324,33 +319,59 @@ larry.prototype = {
                             preserveFiles: false,
                             preserveTimeStamps: false,
                             inflateSymlinks: false,
+                            //includePattern is working only at 1 level, inner folders are being ignored.
                             include: components[index].includePattern === "" ? undefined : components[index].includePattern,
                             exclude: components[index].excludePattern === "" ? undefined : components[index].excludePattern
                         };
 
+
+
                         for(cpindex in components[index].include){
                             source = path.join(self.config.options.input,components[index].include[cpindex]);
-                            destination = path.join(self.config.options.output,package.name,components[index].destination[cpindex]);
+                            destination = path.join(destinationRoot,components[index].destination[cpindex]);
                             wrench.mkdirSyncRecursive(destination);
                             source = path.resolve(source);
                             destination = path.resolve(destination);
-                            console.log(source);
-                            console.log(destination);
                             wrench.copyDirSyncRecursive(source, destination, filterOptions);
                         }
                     }
                 }
             }
 
+            if(typeof self.config.options.archive === "undefined"){
+                if(typeof package.archive === "undefined"){
+                    zipPackage = true;
+                }
+                else{
+                    zipPackage = package.archive;
+                }
+            }
+            else {
+                if(typeof package.archive === "undefined"){
+                    zipPackage = self.config.options.archive;
+                }
+                else{
+                    zipPackage = package.archive;
+                }
+            }
+
             //Start zipping packages here
-            var archive = new Zip();
-            archive.addLocalFolder(path.resolve(self.config.options.output,package.name));
-            archive.writeZip(path.resolve(self.config.options.output)+"/"+package.name+".zip");
-            wrench.rmdirSyncRecursive(path.resolve(self.config.options.output,package.name));
+            if(typeof zipPackage !== "boolean"){
+                process.exit(1);
+                console.log("->Error: archive true/false option for package "+package.name+" is not valid");
+            }
+            if(zipPackage){
+                var archive = new Zip();
+                archive.addLocalFolder(path.resolve(self.config.options.output,package.name));
+                archive.writeZip(path.resolve(self.config.options.output)+"/"+package.name+".zip");
+                wrench.rmdirSyncRecursive(path.resolve(self.config.options.output,package.name));
+                console.log("->Success: Package created. Package zipped "+package.name);
+            }
+            else {
+                console.log("->Success: Package created. Not zipping "+package.name);
+            }
+
         }
-
-
-
 
         //Return 0 when packaging is done
 

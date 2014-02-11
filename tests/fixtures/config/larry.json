@@ -20,8 +20,8 @@
                 "node_modules/commander",
                 "node_modules/jamsmine-node/LICENSE"
             ],
-            "excludePattern": "",
-            "includePattern": ".*\\.json",
+            "excludePattern": ".*\\.json",
+            "includePattern": "",
             "recursive": true
         },
         {
@@ -55,7 +55,7 @@
                 "component-1",
                 "component-2"
             ],
-            "archive": true
+            "archive": false
         }
     ]
 }
