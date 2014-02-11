@@ -8,7 +8,7 @@ Larry is a generic packaging tool for applications that need to bundle their sou
 
 Usage: `larry [options]`
 
-### Options:###
+### Options ###
 
 Parameter             | Description
 ---------------------:|:-----------
@@ -20,7 +20,7 @@ Parameter             | Description
 
 Configuration of Larry has three main parts - options, components and packages. These configurations need to be put in a JSON file, which is passed to the `larry` executible with the `--config` option. A sample configuration file can be seen at [`tests/fixtures/config/larry.json`](tests/fixtures/config/larry.json).
 
-### Options ### 
+### Options ###
 
 These are general options for Larry, the `options` object can contain:
 
