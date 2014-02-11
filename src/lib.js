@@ -274,17 +274,18 @@ larry.prototype = {
             }
 
             //Executing pre packaging scripts
+            var callback = function (error, stdout, stderr) {
+                sys.print(stdout);
+                sys.print(stderr);
+                if (error !== null) {
+                    console.log("->Error: Running prepackaging script "+path.join(package.prepackage[prepackageIndex])+" "+ error);
+                    process.exit(1);
+                }
+            };
 
-            if(typeof package.prepackage === "array"){
+            if(Object.prototype.toString.call(package.prepackage) === "[object array]"){
                 for(prepackageIndex in package.prepackage){
-                    child = exec("./"+path.join(package.prepackage[prepackageIndex]), function (error, stdout, stderr) {
-                        sys.print(stdout);
-                        sys.print(stderr);
-                        if (error !== null) {
-                            console.log('->Error: Running prepackaging script '+path.join(package.prepackage[prepackageIndex])+" "+ error);
-                            process.exit(1);
-                        }
-                    });
+                    child = exec("./"+path.join(package.prepackage[prepackageIndex]), callback(error, stdout, stderr));
                 }
             }
 
@@ -397,7 +398,7 @@ larry.prototype = {
 
         //Executing post packaging scripts
 
-        if(typeof package.postpackage === "array"){
+        if(Object.prototype.toString.call(package.postpackage) === "[object array]"){
             for(postpackageIndex in package.postpackage){
                 child = exec("./"+path.join(package.postpackage[prepackageIndex]), function (error, stdout, stderr) {
                     sys.print(stdout);
