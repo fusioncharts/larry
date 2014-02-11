@@ -22,6 +22,7 @@ if [ -z "${BUILD_ID}" ]; then
 fi
 
 # Install the testing environment (if not already)
+sudo apt-get install libzip-dev
 git submodule update --init --recursive
 npm -d install
 

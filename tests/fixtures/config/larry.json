@@ -1,0 +1,57 @@
+{
+    "options": {
+        "output": "./tests/artefacts",
+        "input": "",
+        "archive": true
+    },
+    "components": [
+        {
+            "name": "component-1",
+            "include": [
+                "src",
+                "node_modules/"
+                ],
+            "destination": [
+                "bin",
+                "files"
+            ],
+            "exclude": [
+                "node_modules/commander",
+                "node_modules/jamsmine-node/LICENSE"
+            ],
+            "excludePattern": ".*\\.json",
+            "includePattern": "",
+            "recursive": true
+        },
+        {
+            "name": "component-2",
+            "include": [
+                "src"
+            ],
+            "destination": [
+                "files"
+            ],
+            "recursive": true
+        }
+    ],
+    "packages": [
+        {
+            "name": "p1",
+            "enabled": true,
+            "components": [
+                "component-1"
+            ],
+            "archiveRoot": "package1"
+        },
+
+        {
+            "name": "p2",
+            "enabled": true,
+            "components": [
+                "component-2",
+                "component-1"
+            ],
+            "archive": false
+        }
+    ]
+}
