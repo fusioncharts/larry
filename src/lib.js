@@ -258,7 +258,6 @@ larry.prototype = {
             includePattern,
             zipPackage,
             toExclude = [],
-            toExcludeIndex,
             destinationRoot,
             filterOptions = {};
 
