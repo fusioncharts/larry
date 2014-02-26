@@ -137,4 +137,4 @@ A sample `packages` object will look like:
  - Add preprocess and postprocess hook support for packages.
  - Add package verification support after they have been created.
 
-[drone-badge]: https://drone.io/bitbucket.org/fusioncharts/larry/status.png
+[drone-badge]: https://drone.io/github.com/fusioncharts/larry/status.png
