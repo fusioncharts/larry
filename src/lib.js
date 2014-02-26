@@ -4,7 +4,7 @@
 
 var fs = require("fs"),
     wrench = require("wrench"),
-    Zip = require('archiver'),
+    Zip = require("archiver"),
     path = require("path"),
     projectPath =path.resolve(),
     source,
@@ -259,7 +259,13 @@ larry.prototype = {
             zipPackage,
             toExclude = [],
             destinationRoot,
-            filterOptions = {};
+            filterOptions = {},
+            onArchive = function (output, packname) {
+                return function () {
+                    console.log( "Deleting "+output, packname );
+                    wrench.rmdirSyncRecursive(path.resolve(output, packname));
+                };
+            };
 
 
         //Loop through enabled packages
@@ -366,17 +372,13 @@ larry.prototype = {
                 console.log("->Error: archive true/false option for package "+package.name+" is not valid");
             }
             if(zipPackage){
-                var archive = Zip('zip');
+                var archive = new Zip("zip");
                 var output = fs.createWriteStream(path.resolve(self.config.options.output)+"/"+package.name+".zip");
-                archive.on('end', (function (output, packname) {
-                    return function () {
-                        console.log( "Deleting "+output, packname );
-                        wrench.rmdirSyncRecursive(path.resolve(output, packname));
-                    }
-                })(self.config.options.output, package.name));
+
+                archive.on("end", onArchive(self.config.options.output, package.name));
                 archive.pipe(output);
                 archive.bulk([
-                    { expand: true, cwd:path.resolve(self.config.options.output,package.name), src: ['**']}
+                    { expand: true, cwd:path.resolve(self.config.options.output,package.name), src: ["**"]}
                 ]);
                 archive.finalize();
                 console.log("->Success: Package created. Package zipped "+package.name);
