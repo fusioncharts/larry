@@ -73,10 +73,8 @@ var larry = function(config, schema) {
         console.log("->Success: Valid output path "+path.join(projectPath,self.config.options.output));
     }
     else{
-        console.log("->Error: Invalid output path "+path.join(projectPath,self.config.options.output));
-        constructorCode = 3;
-        this.constructorCode = constructorCode;
-        return constructorCode;
+        console.log("->Warning: Output path doesn't exist. Creating "+path.join(projectPath,self.config.options.output));
+        wrench.mkdirSyncRecursive(path.join(projectPath,self.config.options.output), 0777);
     }
     constructorCode = 0;
     this.constructorCode = constructorCode;
