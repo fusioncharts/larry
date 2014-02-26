@@ -41,7 +41,8 @@
             "components": [
                 "component-1"
             ],
-            "archiveRoot": "package1"
+            "archiveRoot": "package1",
+            "archive": true
         },
 
         {

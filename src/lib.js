@@ -4,7 +4,7 @@
 
 var fs = require("fs"),
     wrench = require("wrench"),
-    Zip = require("adm-zip"),
+    Zip = require("archiver"),
     path = require("path"),
     projectPath =path.resolve(),
     source,
@@ -73,10 +73,8 @@ var larry = function(config, schema) {
         console.log("->Success: Valid output path "+path.join(projectPath,self.config.options.output));
     }
     else{
-        console.log("->Error: Invalid output path "+path.join(projectPath,self.config.options.output));
-        constructorCode = 3;
-        this.constructorCode = constructorCode;
-        return constructorCode;
+        console.log("->Warning: Output path doesn't exist. Creating "+path.join(projectPath,self.config.options.output));
+        wrench.mkdirSyncRecursive(path.join(projectPath,self.config.options.output), 0777);
     }
     constructorCode = 0;
     this.constructorCode = constructorCode;
@@ -259,7 +257,13 @@ larry.prototype = {
             zipPackage,
             toExclude = [],
             destinationRoot,
-            filterOptions = {};
+            filterOptions = {},
+            onArchive = function (output, packname) {
+                return function () {
+                    console.log( "Deleting "+output, packname );
+                    wrench.rmdirSyncRecursive(path.resolve(output, packname));
+                };
+            };
 
 
         //Loop through enabled packages
@@ -366,10 +370,15 @@ larry.prototype = {
                 console.log("->Error: archive true/false option for package "+package.name+" is not valid");
             }
             if(zipPackage){
-                var archive = new Zip();
-                archive.addLocalFolder(path.resolve(self.config.options.output,package.name));
-                archive.writeZip(path.resolve(self.config.options.output)+"/"+package.name+".zip");
-                wrench.rmdirSyncRecursive(path.resolve(self.config.options.output,package.name));
+                var archive = new Zip("zip");
+                var output = fs.createWriteStream(path.resolve(self.config.options.output)+"/"+package.name+".zip");
+
+                archive.on("end", onArchive(self.config.options.output, package.name));
+                archive.pipe(output);
+                archive.bulk([
+                    { expand: true, cwd:path.resolve(self.config.options.output,package.name), src: ["**"]}
+                ]);
+                archive.finalize();
                 console.log("->Success: Package created. Package zipped "+package.name);
             }
             else {
