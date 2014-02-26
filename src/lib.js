@@ -4,7 +4,7 @@
 
 var fs = require("fs"),
     wrench = require("wrench"),
-    Zip = require("adm-zip"),
+    Zip = require('archiver'),
     path = require("path"),
     projectPath =path.resolve(),
     source,
@@ -366,10 +366,19 @@ larry.prototype = {
                 console.log("->Error: archive true/false option for package "+package.name+" is not valid");
             }
             if(zipPackage){
-                var archive = new Zip();
-                archive.addLocalFolder(path.resolve(self.config.options.output,package.name));
-                archive.writeZip(path.resolve(self.config.options.output)+"/"+package.name+".zip");
-                wrench.rmdirSyncRecursive(path.resolve(self.config.options.output,package.name));
+                var archive = Zip('zip');
+                var output = fs.createWriteStream(path.resolve(self.config.options.output)+"/"+package.name+".zip");
+                archive.on('end', (function (output, packname) {
+                    return function () {
+                        console.log( "Deleting "+output, packname );
+                        wrench.rmdirSyncRecursive(path.resolve(output, packname));
+                    }
+                })(self.config.options.output, package.name));
+                archive.pipe(output);
+                archive.bulk([
+                    { expand: true, cwd:path.resolve(self.config.options.output,package.name), src: ['**']}
+                ]);
+                archive.finalize();
                 console.log("->Success: Package created. Package zipped "+package.name);
             }
             else {
