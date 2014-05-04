@@ -337,7 +337,7 @@ larry.prototype = {
                             }
                             else {
                                 wrench.mkdirSyncRecursive(path.dirname(destination));
-                                fs.openSync(destination, 'w');
+                                fs.openSync(destination, "w");
                             }
                             source = path.resolve(source);
                             destination = path.resolve(destination);
