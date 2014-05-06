@@ -6,7 +6,7 @@ var fs = require("fs"),
     wrench = require("wrench"),
     Zip = require("archiver"),
     path = require("path"),
-    projectPath =path.resolve(),
+    projectPath = path.resolve(),
     source,
     destination,
     schemaValidator = require("JSV").JSV,
@@ -14,12 +14,12 @@ var fs = require("fs"),
     schemaValidatorLog,
     self,
     componentsList = [],
-    packagesList= [],
+    packagesList = [],
     constructorCode;
 
 //Main class "larry" definition.
 
-var larry = function(config, schema) {
+var larry = function (config, schema) {
     /*
      * Constructor method
      * Things this will do:
@@ -36,7 +36,7 @@ var larry = function(config, schema) {
     self.config = JSON.parse(config);
     self.schema = JSON.parse(schema);
 
-    schemaValidatorLog = schemaValidatorEnv.validate(self.config,self.schema);
+    schemaValidatorLog = schemaValidatorEnv.validate(self.config, self.schema);
 
     //1. Reporting schema validation results
 
@@ -57,11 +57,11 @@ var larry = function(config, schema) {
 
     //2. Checking if input path exists
 
-    if(fs.existsSync(path.join(projectPath,self.config.options.input))){
-        console.log("->Success: Valid input path "+path.join(projectPath,self.config.options.input));
+    if (fs.existsSync(path.join(projectPath, self.config.options.input))) {
+        console.log("->Success: Valid input path " + path.join(projectPath, self.config.options.input));
     }
-    else{
-        console.log("->Error: Invalid input path "+projectPath+"/"+self.config.options.input);
+    else {
+        console.log("->Error: Invalid input path " + projectPath + "/" + self.config.options.input);
         constructorCode = 2;
         this.constructorCode = constructorCode;
         return constructorCode;
@@ -69,12 +69,12 @@ var larry = function(config, schema) {
 
     //3. Checking if output path exists
 
-    if(fs.existsSync(path.join(projectPath,self.config.options.output))){
-        console.log("->Success: Valid output path "+path.join(projectPath,self.config.options.output));
+    if (fs.existsSync(path.join(projectPath, self.config.options.output))) {
+        console.log("->Success: Valid output path " + path.join(projectPath, self.config.options.output));
     }
-    else{
-        console.log("->Warning: Output path doesn't exist. Creating "+path.join(projectPath,self.config.options.output));
-        wrench.mkdirSyncRecursive(path.join(projectPath,self.config.options.output), 0777);
+    else {
+        console.log("->Warning: Output path doesn't exist. Creating " + path.join(projectPath, self.config.options.output));
+        wrench.mkdirSyncRecursive(path.join(projectPath, self.config.options.output), 0777);
     }
     constructorCode = 0;
     this.constructorCode = constructorCode;
@@ -84,7 +84,7 @@ var larry = function(config, schema) {
 //API definitions for the class "larry"
 
 larry.prototype = {
-    verifyComponents: function() {
+    verifyComponents: function () {
 
         /*
          * Things this will do:
@@ -101,49 +101,49 @@ larry.prototype = {
             componentIndex,
             componentIterator;
 
-        for(componentIndex in components){
+        for (componentIndex in components) {
 
             component = components[componentIndex];
 
             //1. Verifying if package names are valid
 
-            if(component.name !== "" && component.name !== undefined){
-                console.log("->Success: Package name is valid for "+component.name);
+            if (component.name !== "" && component.name !== undefined) {
+                console.log("->Success: Package name is valid for " + component.name);
             }
-            else{
+            else {
                 console.log("->Error: One of the packages do not have a valid name");
                 return 1;
             }
 
             //2. Verifying include paths exist and component destinations will be created inside output/packageName/ folder.
 
-            for(componentIterator in component.include){
-                if(fs.existsSync(path.resolve(self.config.options.input,component.include[componentIterator]))){
-                    console.log("->Success: Valid source path "+path.resolve(self.config.options.input,component.include[componentIterator]));
+            for (componentIterator in component.include) {
+                if (fs.existsSync(path.resolve(self.config.options.input, component.include[componentIterator]))) {
+                    console.log("->Success: Valid source path " + path.resolve(self.config.options.input, component.include[componentIterator]));
                 }
-                else{
-                    console.log("->Error: Invalid source path "+path.resolve(self.config.options.input,component.include[componentIterator]));
+                else {
+                    console.log("->Error: Invalid source path " + path.resolve(self.config.options.input, component.include[componentIterator]));
                     return 2;
                 }
             }
 
             //3. Verifying if the component names are all unique
 
-            if(component.name !== undefined && component.name !== "" && (componentsList.indexOf(component.name) == -1)){
+            if (component.name !== undefined && component.name !== "" && (componentsList.indexOf(component.name) == -1)) {
                 componentsList.push(component.name);
             }
-            else{
-                console.log("->Error: Invalid/Duplicate component name found: "+component.name);
+            else {
+                console.log("->Error: Invalid/Duplicate component name found: " + component.name);
                 return 3;
             }
 
             //4. Verifying the include and destination counts
 
-            if(component.include.length == component.destination.length){
-                console.log("->Success: Count of include and destination match for the component "+component.name);
+            if (component.include.length == component.destination.length) {
+                console.log("->Success: Count of include and destination match for the component " + component.name);
             }
-            else{
-                console.log("->Error: Count of include and destination do not match for the component "+component.name);
+            else {
+                console.log("->Error: Count of include and destination do not match for the component " + component.name);
                 return 4;
             }
 
@@ -159,7 +159,7 @@ larry.prototype = {
 
     },
 
-    verifyPackages: function() {
+    verifyPackages: function () {
 
         /*
          * Things this will do:
@@ -174,44 +174,43 @@ larry.prototype = {
             packageIndex,
             packageIterator;
 
-        for(packageIndex in packages){
+        for (packageIndex in packages) {
 
             package = packages[packageIndex];
 
             //1. Verifying if package names are valid
 
-            if(package.name !== "" && package.name !== undefined){
-                console.log("->Success: Package name is valid for "+package.name);
+            if (package.name !== "" && package.name !== undefined) {
+                console.log("->Success: Package name is valid for " + package.name);
             }
-            else{
+            else {
                 console.log("->Error: One of the packages do not have a valid name");
                 return 1;
             }
 
 
-
             //2. Verifying if packages contain valid component names
 
-            for(packageIterator in package.components){
-                if(componentsList.indexOf(package.components[packageIterator]) !== -1){
-                    console.log("->Success: Valid component found in "+package.name);
-                    console.log("Component name: "+package.components[packageIterator]);
+            for (packageIterator in package.components) {
+                if (componentsList.indexOf(package.components[packageIterator]) !== -1) {
+                    console.log("->Success: Valid component found in " + package.name);
+                    console.log("Component name: " + package.components[packageIterator]);
                 }
-                else{
-                    console.log("->Error: Valid component not found in "+package.name);
+                else {
+                    console.log("->Error: Valid component not found in " + package.name);
                     console.log("Also make sure component name is not empty");
-                    console.log("Component name: "+package.components[packageIterator]);
+                    console.log("Component name: " + package.components[packageIterator]);
                     return 2;
                 }
             }
 
             //3. Verifying if the packages names are all unique and not empty
 
-            if(packagesList.indexOf(package.name) == -1){
+            if (packagesList.indexOf(package.name) == -1) {
                 packagesList.push(package.name);
             }
-            else{
-                console.log("->Error: Duplicate package name found: "+package.name);
+            else {
+                console.log("->Error: Duplicate package name found: " + package.name);
                 console.log("Also make sure package name is not empty");
                 return 3;
             }
@@ -227,7 +226,7 @@ larry.prototype = {
 
     },
 
-    startPackaging: function() {
+    startPackaging: function () {
 
         /*
          * Things this will do:
@@ -260,7 +259,7 @@ larry.prototype = {
             filterOptions = {},
             onArchive = function (output, packname) {
                 return function () {
-                    console.log( "Deleting "+output, packname );
+                    console.log("Deleting " + output, packname);
                     wrench.rmdirSyncRecursive(path.resolve(output, packname));
                 };
             };
@@ -268,54 +267,54 @@ larry.prototype = {
 
         //Loop through enabled packages
 
-        for(packageIndex in packages){
+        for (packageIndex in packages) {
             package = packages[packageIndex];
-            if(!(package.enabled)){
+            if (!(package.enabled)) {
                 continue;
             }
 
-            console.log("Package: "+package.name);
+            console.log("Package: " + package.name);
 
-            if(typeof package.archiveRoot === "undefined" || package.archiveRoot === ""){
-                destinationRoot = path.join(self.config.options.output,package.name);
+            if (typeof package.archiveRoot === "undefined" || package.archiveRoot === "") {
+                destinationRoot = path.join(self.config.options.output, package.name);
             }
             else {
-                destinationRoot = path.join(self.config.options.output,package.name,package.archiveRoot);
+                destinationRoot = path.join(self.config.options.output, package.name, package.archiveRoot);
             }
 
 
-            for(componentIterator in package.components){
+            for (componentIterator in package.components) {
                 componentName = package.components[componentIterator];
 
                 //Loop through each component and it"s properties
 
                 for (index in components) {
                     if (components[index].name == componentName) {
-                        if(typeof components[index].enabled == "boolean"){
+                        if (typeof components[index].enabled == "boolean") {
                             componentEnabled = components[index].enabled;
                         }
-                        else{
+                        else {
                             componentEnabled = components[index].enabled;
                         }
 
-                        if(typeof components[index].recursive == "boolean"){
+                        if (typeof components[index].recursive == "boolean") {
                             componentRecursive = components[index].recursive;
                         }
-                        else{
+                        else {
                             componentRecursive = components[index].recursive;
                         }
 
-                        if(componentEnabled === false){
-                            console.log("->Error: Disabled component "+components[index].name+" was used in the package "+package.name);
+                        if (componentEnabled === false) {
+                            console.log("->Error: Disabled component " + components[index].name + " was used in the package " + package.name);
                             return 1;
                         }
 
 
-                        if(components[index].excludePattern !== undefined){
+                        if (components[index].excludePattern !== undefined) {
                             excludePattern = components[index].excludePattern;
                         }
 
-                        if(components[index].includePattern !== undefined){
+                        if (components[index].includePattern !== undefined) {
                             includePattern = components[index].includePattern;
                         }
 
@@ -330,14 +329,24 @@ larry.prototype = {
 
                         toExclude = components[index].exclude;
 
-                        for(cpindex in components[index].include){
-                            source = path.join(self.config.options.input,components[index].include[cpindex]);
-                            destination = path.join(destinationRoot,components[index].destination[cpindex]);
-                            wrench.mkdirSyncRecursive(destination);
+                        for (cpindex in components[index].include) {
+                            source = path.join(self.config.options.input, components[index].include[cpindex]);
+                            destination = path.join(destinationRoot, components[index].destination[cpindex]);
+                            if (fs.lstatSync(source).isDirectory()) {
+                                wrench.mkdirSyncRecursive(destination);
+                            }
+                            else {
+                                wrench.mkdirSyncRecursive(path.dirname(destination));
+                                fs.openSync(destination, "w");
+                            }
                             source = path.resolve(source);
                             destination = path.resolve(destination);
-                            wrench.copyDirSyncRecursive(source, destination, filterOptions);
-
+                            if (fs.lstatSync(source).isDirectory()) {
+                                wrench.copyDirSyncRecursive(source, destination, filterOptions);
+                            }
+                            else{
+                                fs.writeFileSync(destination, fs.readFileSync(source));
+                            }
                         }
 
                     }
@@ -346,43 +355,43 @@ larry.prototype = {
 
             //Small logical block to check if packaging needs to be done, by default zipPackage is true if not specifically defined in options.
 
-            if(typeof self.config.options.archive === "undefined"){
-                if(typeof package.archive === "undefined"){
+            if (typeof self.config.options.archive === "undefined") {
+                if (typeof package.archive === "undefined") {
                     zipPackage = true;
                 }
-                else{
+                else {
                     zipPackage = package.archive;
                 }
             }
             else {
-                if(typeof package.archive === "undefined"){
+                if (typeof package.archive === "undefined") {
                     zipPackage = self.config.options.archive;
                 }
-                else{
+                else {
                     zipPackage = package.archive;
                 }
             }
 
             //Start zipping packages here
 
-            if(typeof zipPackage !== "boolean"){
+            if (typeof zipPackage !== "boolean") {
                 process.exit(1);
-                console.log("->Error: archive true/false option for package "+package.name+" is not valid");
+                console.log("->Error: archive true/false option for package " + package.name + " is not valid");
             }
-            if(zipPackage){
+            if (zipPackage) {
                 var archive = new Zip("zip");
-                var output = fs.createWriteStream(path.resolve(self.config.options.output)+"/"+package.name+".zip");
+                var output = fs.createWriteStream(path.resolve(self.config.options.output) + "/" + package.name + ".zip");
 
                 archive.on("end", onArchive(self.config.options.output, package.name));
                 archive.pipe(output);
                 archive.bulk([
-                    { expand: true, cwd:path.resolve(self.config.options.output,package.name), src: ["**"]}
+                    { expand: true, cwd: path.resolve(self.config.options.output, package.name), src: ["**"]}
                 ]);
                 archive.finalize();
-                console.log("->Success: Package created. Package zipped "+package.name);
+                console.log("->Success: Package created. Package zipped " + package.name);
             }
             else {
-                console.log("->Success: Package created. Not zipping "+package.name);
+                console.log("->Success: Package created. Not zipping " + package.name);
             }
         }
 
