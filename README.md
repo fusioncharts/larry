@@ -138,3 +138,5 @@ A sample `packages` object will look like:
  - Add package verification support after they have been created.
 
 [drone-badge]: https://drone.io/github.com/fusioncharts/larry/status.png
+
+[![Analytics](https://ga-beacon.appspot.com/UA-45124206-2/larry/index)](https://github.com/igrigorik/ga-beacon)
