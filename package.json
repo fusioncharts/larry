@@ -1,7 +1,7 @@
 {
     "name": "larry",
     "description": "A packaging tool for bundling project releases",
-    "version": "0.0.3-beta",
+    "version": "0.0.4",
 
     "dependencies": {
         "commander": "~2.1.0",
