@@ -1,14 +1,15 @@
 {
     "name": "larry",
     "description": "A packaging tool for bundling project releases",
-    "version": "0.0.3-beta",
+    "version": "0.0.4",
 
     "dependencies": {
         "commander": "~2.1.0",
         "underscore": "~1.5.2",
         "JSV": "~4.0.2",
         "archiver": "~0.6.1",
-        "wrench": "~1.5.7"
+        "wrench": "~1.5.7",
+        "ascli": "0.3.0"
     },
 
     "repository": {

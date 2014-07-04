@@ -15,6 +15,7 @@ Parameter             | Description
 `-h, --help`          | Output usage information
 `-V, --version`       | Output the version number
 `-c, --config [path]` | Path to JSON configuration file. Default './larry.json' in the current directory.
+`-q, --quiet          | Let not Larry chatter while he does his job.
 
 ## Configuration ##
 
