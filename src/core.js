@@ -28,12 +28,24 @@ module.exports = {
         // Load config file data
         try {
             config = fs.readFileSync(path.resolve(program.config)).toString();
+            config = JSON.parse(config);
         }
             // If config file is not found, or cannot be parsed, throw error and stop execution
         catch (err) {
             console.log(program);
             throw new Error("Could not parse JSON config file: " + err);
         }
+
+        //Check if options.input and options.output parameters are passed as arguments. This will override config options in the larry JSON config file
+
+        if(program["options-input"]){
+            config.options.input = (program["options-input"]).toString();
+        }
+
+        if(program["options-output"]){
+            config.options.output = (program["options-output"]).toString();
+        }
+
 
         //Initializing objects
 

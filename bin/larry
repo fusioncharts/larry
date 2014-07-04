@@ -12,6 +12,8 @@ var program = require("commander"),
 program
     .version(packagejson.version)
     .option("-c, --config [path]", "Path to JSON configuration file. Default '../config/larry.json' in the current directory.")
+    .option("--options-input [path]", "Relative path from where files are referenced")
+    .option("--options-output [path]", "Path to where packages are created in")
     .parse(process.argv);
 
 /**
