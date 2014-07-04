@@ -38,12 +38,12 @@ module.exports = {
 
         //Check if options.input and options.output parameters are passed as arguments. This will override config options in the larry JSON config file
 
-        if(program["options.input"]){
-            config.options.input = (program["options.input"]).toString();
+        if(program["options-input"]){
+            config.options.input = (program["options-input"]).toString();
         }
 
-        if(program["options.output"]){
-            config.options.output = (program["options.output"]).toString();
+        if(program["options-output"]){
+            config.options.output = (program["options-output"]).toString();
         }
 
 
