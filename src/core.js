@@ -13,15 +13,21 @@ module.exports = {
             path = require("path"),
             schema = fs.readFileSync(path.resolve(schemaFile)).toString(),
             Larry = require("./lib.js"),
+            logger = require("./logger.js"),
             package,
             componentsVerificationCode,
             packagesVerificationCode,
             packagingStatus,
             config;
 
+        // Ask logger to shut up.
+        if (program.quiet) {
+            global.loggerIsQuiet = true;
+        }
+
         // Make --config mandatory
         if (!program.config) {
-            console.log("Please provide path to configuration file with '--config <path>'.");
+            logger.error("Please provide path to configuration file with '--config <path>'.");
             process.exit(1);
         }
 
@@ -32,7 +38,7 @@ module.exports = {
         }
             // If config file is not found, or cannot be parsed, throw error and stop execution
         catch (err) {
-            console.log(program);
+            logger.log(program);
             throw new Error("Could not parse JSON config file: " + err);
         }
 
@@ -49,7 +55,7 @@ module.exports = {
 
         //Initializing objects
 
-        console.log("=>Packaging started...");
+        logger.log("Packaging started...");
 
         package = new Larry(config, schema);
 
@@ -57,22 +63,22 @@ module.exports = {
 
         switch(package.constructorCode){
             case 0:
-                console.log("=>Success: Config validation and verification passed");
+                logger.log("  ✔ config validation and verification passed");
                 break;
             case 1:
-                console.log("=>Error: Config validation and verification not passed");
+                logger.error("Config validation and verification not passed");
                 process.exit(1);
                 break;
             case 2:
-                console.log("=>Error: Config options.input is not a valid path");
+                logger.error("Config options.input is not a valid path");
                 process.exit(1);
                 break;
             case 3:
-                console.log("=>Error: Config options.output is not a valid path");
+                logger.error("Config options.output is not a valid path");
                 process.exit(1);
                 break;
             default:
-                console.log("=>Exiting: Unknown error");
+                logger.error("Unknown error");
         }
 
 
@@ -84,22 +90,22 @@ module.exports = {
 
         switch(componentsVerificationCode){
             case 0:
-                console.log("=>Success: All components are verified");
+                logger.log("  ✔ all components are verified");
                 break;
             case 1:
-                console.log("=>Error: One of the component do not have a valid name");
+                logger.error("one of the component do not have a valid name");
                 process.exit(1);
                 break;
             case 2:
-                console.log("=>Error: source path do not exist for a component");
+                logger.error("source path do not exist for a component");
                 process.exit(1);
                 break;
             case 3:
-                console.log("=>Error: Some components names are reused");
+                logger.error("some components names are reused");
                 process.exit(1);
                 break;
             case 4:
-                console.log("=>Error: include and destination count do not match for a component");
+                logger.error("include and destination count do not match for a component");
                 process.exit(1);
                 break;
         }
@@ -108,18 +114,18 @@ module.exports = {
 
         switch(packagesVerificationCode){
             case 0:
-                console.log("=>Success: All packages are verified");
+                logger.log("  ✔︎ all packages are verified!");
                 break;
             case 1:
-                console.log("=>Error: One of the packages do not have a valid name");
+                logger.error("One of the packages do not have a valid name.");
                 process.exit(1);
                 break;
             case 2:
-                console.log("=>Error: One of the packages do not have valid components");
+                logger.error("One of the packages do not have valid components.");
                 process.exit(1);
                 break;
             case 3:
-                console.log("=>Error: Duplicate package names found");
+                logger.error("Duplicate package names found.");
                 process.exit(1);
                 break;
         }
@@ -129,10 +135,10 @@ module.exports = {
 
         switch(packagingStatus){
             case 0:
-                console.log("=>Success: Packaging is done");
+                logger.log("  ✔︎ packaging is done!");
                 break;
             case 1:
-                console.log("=>Error: Package was not created");
+                logger.error("Package was not created.");
                 process.exit(1);
                 break;
         }

@@ -8,7 +8,8 @@
         "underscore": "~1.5.2",
         "JSV": "~4.0.2",
         "archiver": "~0.6.1",
-        "wrench": "~1.5.7"
+        "wrench": "~1.5.7",
+        "ascli": "0.3.0"
     },
 
     "repository": {

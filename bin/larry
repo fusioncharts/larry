@@ -14,6 +14,7 @@ program
     .option("-c, --config [path]", "Path to JSON configuration file. Default '../config/larry.json' in the current directory.")
     .option("--options-input [path]", "Relative path from where files are referenced")
     .option("--options-output [path]", "Path to where packages are created in")
+    .option("-q, --quiet", "Let not Larry chatter while he does his job.")
     .parse(process.argv);
 
 /**
