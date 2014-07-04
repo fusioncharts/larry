@@ -34,7 +34,7 @@ var larry = function (config, schema) {
 
     //Initializing config and schema
 
-    self.config = JSON.parse(config);
+    self.config = config;
     self.schema = JSON.parse(schema);
 
     schemaValidatorLog = schemaValidatorEnv.validate(self.config, self.schema);
