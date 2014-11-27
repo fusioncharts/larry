@@ -263,7 +263,8 @@ larry.prototype = {
                     logger.log("  ✔ deleting " + output, packname);
                     wrench.rmdirSyncRecursive(path.resolve(output, packname));
                 };
-            };
+            },
+            destinationFileDesc;
 
 
         //Loop through enabled packages
@@ -338,7 +339,7 @@ larry.prototype = {
                             }
                             else {
                                 wrench.mkdirSyncRecursive(path.dirname(destination));
-                                fs.openSync(destination, "w");
+                                destinationFileDesc = fs.openSync(destination, "w");
                             }
                             source = path.resolve(source);
                             destination = path.resolve(destination);
@@ -348,6 +349,7 @@ larry.prototype = {
                             else{
                                 fs.writeFileSync(destination, fs.readFileSync(source));
                             }
+                            fs.close(destinationFileDesc);
                         }
 
                     }
@@ -407,3 +409,4 @@ larry.prototype = {
 
 larry.prototype.constructor = larry;
 module.exports = larry;
+
