@@ -8,15 +8,8 @@ var fs = require("fs"),
     path = require("path"),
     logger = require("../src/logger.js"),
     projectPath = path.resolve(),
-    source,
-    destination,
     schemaValidator = require("JSV").JSV,
-    schemaValidatorEnv = schemaValidator.createEnvironment(),
-    schemaValidatorLog,
-    self,
-    componentsList = [],
-    packagesList = [],
-    constructorCode;
+    schemaValidatorEnv = schemaValidator.createEnvironment();
 
 //Main class "larry" definition.
 
@@ -30,7 +23,9 @@ var larry = function (config, schema) {
      *
      */
 
-    self = this;
+    var self = this,
+        constructorReturnCode,
+        schemaValidatorLog;
 
     //Initializing config and schema
 
@@ -50,9 +45,9 @@ var larry = function (config, schema) {
 
         //Exit code 1, indicating error and stopping further execution
 
-        constructorCode = 1;
-        this.constructorCode = constructorCode;
-        return constructorCode;
+        constructorReturnCode = 1;
+        this.constructorReturnCode = constructorReturnCode;
+        return constructorReturnCode;
     }
 
     //2. Checking if input path exists
@@ -62,9 +57,9 @@ var larry = function (config, schema) {
     }
     else {
         logger.log("  ✘ invalid input path " + projectPath + "/" + self.config.options.input);
-        constructorCode = 2;
-        this.constructorCode = constructorCode;
-        return constructorCode;
+        constructorReturnCode = 2;
+        this.constructorReturnCode = constructorReturnCode;
+        return constructorReturnCode;
     }
 
     //3. Checking if output path exists
@@ -76,9 +71,9 @@ var larry = function (config, schema) {
         logger.log("  ✘ output path doesn't exist. Creating " + path.join(projectPath, self.config.options.output));
         wrench.mkdirSyncRecursive(path.join(projectPath, self.config.options.output), 0777);
     }
-    constructorCode = 0;
-    this.constructorCode = constructorCode;
-    return constructorCode;
+    constructorReturnCode = 0;
+    this.constructorReturnCode = constructorReturnCode;
+    return constructorReturnCode;
 };
 
 //API definitions for the class "larry"
@@ -96,14 +91,11 @@ larry.prototype = {
          *
          */
 
-        var components = self.config.components,
-            component,
-            componentIndex,
-            componentIterator;
+        var self = this,
+            componentsList = [],
+            components = self.config.components;
 
-        for (componentIndex in components) {
-
-            component = components[componentIndex];
+        components.forEach(function (component) {
 
             //1. Verifying if package names are valid
 
@@ -117,15 +109,15 @@ larry.prototype = {
 
             //2. Verifying include paths exist and component destinations will be created inside output/packageName/ folder.
 
-            for (componentIterator in component.include) {
-                if (fs.existsSync(path.resolve(self.config.options.input, component.include[componentIterator]))) {
-                    logger.log("  ✔ Valid source path " + path.resolve(self.config.options.input, component.include[componentIterator]));
+            component.include.forEach(function (includedComponent) {
+                if (fs.existsSync(path.resolve(self.config.options.input, includedComponent))) {
+                    logger.log("  ✔ Valid source path " + path.resolve(self.config.options.input, includedComponent));
                 }
                 else {
-                    logger.log("  ✘ Invalid source path " + path.resolve(self.config.options.input, component.include[componentIterator]));
+                    logger.log("  ✘ Invalid source path " + path.resolve(self.config.options.input, includedComponent));
                     return 2;
                 }
-            }
+            });
 
             //3. Verifying if the component names are all unique
 
@@ -147,7 +139,7 @@ larry.prototype = {
                 return 4;
             }
 
-        }
+        });
 
         logger.log("  ✔ all component names are valid");
         logger.log("  ✔ all component include and destination paths exist");
@@ -169,14 +161,12 @@ larry.prototype = {
          *
          */
 
-        var packages = self.config.packages,
-            package,
-            packageIndex,
-            packageIterator;
+        var self = this,
+            packages = self.config.packages,
+            packagesList = [],
+            componentsList = [];
 
-        for (packageIndex in packages) {
-
-            package = packages[packageIndex];
+        packages.forEach(function (package) {
 
             //1. Verifying if package names are valid
 
@@ -191,18 +181,18 @@ larry.prototype = {
 
             //2. Verifying if packages contain valid component names
 
-            for (packageIterator in package.components) {
-                if (componentsList.indexOf(package.components[packageIterator]) !== -1) {
+            package.components.forEach(function (packageComponent) {
+                if (componentsList.indexOf(packageComponent) !== -1) {
                     logger.log("  ✔ Valid component found in " + package.name);
-                    logger.log("    Component name: " + package.components[packageIterator]);
+                    logger.log("    Component name: " + packageComponent);
                 }
                 else {
                     logger.log("  ✘ Valid component not found in " + package.name);
                     logger.log("    Also make sure component name is not empty");
-                    logger.log("    Component name: " + package.components[packageIterator]);
+                    logger.log("    Component name: " + packageComponent);
                     return 2;
                 }
-            }
+            });
 
             //3. Verifying if the packages names are all unique and not empty
 
@@ -215,7 +205,7 @@ larry.prototype = {
                 return 3;
             }
 
-        }
+        });
 
         logger.log("  ✔ all package names are valid");
         logger.log("  ✔ all packages have valid components");
@@ -242,37 +232,31 @@ larry.prototype = {
          *
          */
 
-        var packages = self.config.packages,
+        var self = this,
+            packages = self.config.packages,
             components = self.config.components,
-            package,
-            packageIndex,
-            componentIterator,
-            componentName,
-            index,
-            cpindex,
-            componentRecursive,
-            componentEnabled,
-            excludePattern,
-            includePattern,
-            zipPackage,
-            toExclude = [],
-            destinationRoot,
             filterOptions = {},
-            onArchive = function (output, packname) {
-                return function () {
-                    logger.log("  ✔ deleting " + output, packname);
-                    wrench.rmdirSyncRecursive(path.resolve(output, packname));
-                };
-            },
-            destinationFileDesc;
+            onArchive;
+
+
+        onArchive = function (output, packname) {
+            return function () {
+                logger.log("  ✔ deleting " + output, packname);
+                wrench.rmdirSyncRecursive(path.resolve(output, packname));
+            };
+        };
 
 
         //Loop through enabled packages
 
-        for (packageIndex in packages) {
-            package = packages[packageIndex];
+        packages.forEach(function (package) {
+            var destinationRoot,
+                zipPackage,
+                archive,
+                output;
+
             if (!(package.enabled)) {
-                continue;
+                return;
             }
 
             logger.log("  ✔ package: " + package.name);
@@ -285,39 +269,43 @@ larry.prototype = {
             }
 
 
-            for (componentIterator in package.components) {
-                componentName = package.components[componentIterator];
-
+            package.components.forEach(function (componentName) {
                 //Loop through each component and it"s properties
 
-                for (index in components) {
-                    if (components[index].name == componentName) {
-                        if (typeof components[index].enabled == "boolean") {
-                            componentEnabled = components[index].enabled;
+                components.forEach(function (component) {
+                    var componentEnabled,
+                        componentRecursive,
+                        excludePattern,
+                        includePattern,
+                        toExclude = [];
+
+                    if (component.name == componentName) {
+                        if (typeof component.enabled == "boolean") {
+                            componentEnabled = component.enabled;
                         }
                         else {
-                            componentEnabled = components[index].enabled;
+                            componentEnabled = component.enabled;
                         }
 
-                        if (typeof components[index].recursive == "boolean") {
-                            componentRecursive = components[index].recursive;
+                        if (typeof component.recursive == "boolean") {
+                            componentRecursive = component.recursive;
                         }
                         else {
-                            componentRecursive = components[index].recursive;
+                            componentRecursive = component.recursive;
                         }
 
                         if (componentEnabled === false) {
-                            logger.log("  ✘ Disabled component " + components[index].name + " was used in the package " + package.name);
+                            logger.log("  ✘ Disabled component " + component.name + " was used in the package " + package.name);
                             return 1;
                         }
 
 
-                        if (components[index].excludePattern !== undefined) {
-                            excludePattern = components[index].excludePattern;
+                        if (component.excludePattern !== undefined) {
+                            excludePattern = component.excludePattern;
                         }
 
-                        if (components[index].includePattern !== undefined) {
-                            includePattern = components[index].includePattern;
+                        if (component.includePattern !== undefined) {
+                            includePattern = component.includePattern;
                         }
 
                         filterOptions = {
@@ -326,20 +314,24 @@ larry.prototype = {
                             preserveFiles: false,
                             preserveTimeStamps: false,
                             inflateSymlinks: false,
-                            exclude: components[index].excludePattern === "" ? undefined : components[index].excludePattern
+                            exclude: component.excludePattern === "" ? undefined : component.excludePattern
                         };
 
-                        toExclude = components[index].exclude;
+                        toExclude = component.exclude;
 
-                        for (cpindex in components[index].include) {
-                            source = path.join(self.config.options.input, components[index].include[cpindex]);
-                            destination = path.join(destinationRoot, components[index].destination[cpindex]);
+                        component.include.forEach(function (includedComponent, cpIndex) {
+                            var source,
+                                destination,
+                                destinationFileDescriptor;
+
+                            source = path.join(self.config.options.input, includedComponent);
+                            destination = path.join(destinationRoot, component.destination[cpIndex]);
                             if (fs.lstatSync(source).isDirectory()) {
                                 wrench.mkdirSyncRecursive(destination);
                             }
                             else {
                                 wrench.mkdirSyncRecursive(path.dirname(destination));
-                                destinationFileDesc = fs.openSync(destination, "w");
+                                destinationFileDescriptor = fs.openSync(destination, "w");
                             }
                             source = path.resolve(source);
                             destination = path.resolve(destination);
@@ -349,12 +341,13 @@ larry.prototype = {
                             else{
                                 fs.writeFileSync(destination, fs.readFileSync(source));
                             }
-                            fs.close(destinationFileDesc);
-                        }
+
+                            destinationFileDescriptor && fs.close(destinationFileDescriptor);
+                        });
 
                     }
-                }
-            }
+                });
+            });
 
             //Small logical block to check if packaging needs to be done, by default zipPackage is true if not specifically defined in options.
 
@@ -382,8 +375,8 @@ larry.prototype = {
                 logger.log("  ✘ archive true/false option for package " + package.name + " is not valid");
             }
             if (zipPackage) {
-                var archive = new Zip("zip");
-                var output = fs.createWriteStream(path.resolve(self.config.options.output) + "/" + package.name + ".zip");
+                archive = new Zip("zip");
+                output = fs.createWriteStream(path.resolve(self.config.options.output) + "/" + package.name + ".zip");
 
                 archive.on("end", onArchive(self.config.options.output, package.name));
                 archive.pipe(output);
@@ -396,7 +389,7 @@ larry.prototype = {
             else {
                 logger.log("  ✔ package created (not archived) " + package.name);
             }
-        }
+        });
 
         //Return 0 when packaging is done
 

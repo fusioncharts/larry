@@ -61,7 +61,7 @@ module.exports = {
 
         //Constructor verifies if the configuration is conforming to the schema in lib/package.conf.schema
 
-        switch(package.constructorCode){
+        switch(package.constructorReturnCode){
             case 0:
                 logger.log("  ✔ config validation and verification passed");
                 break;
