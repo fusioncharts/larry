@@ -349,7 +349,7 @@ larry.prototype = {
                             else{
                                 fs.writeFileSync(destination, fs.readFileSync(source));
                             }
-                            fs.close(destinationFileDesc);
+                            destinationFileDesc && fs.close(destinationFileDesc);
                         }
 
                     }
