@@ -344,7 +344,6 @@ larry.prototype = {
 
                             destinationFileDescriptor && fs.close(destinationFileDescriptor);
                         });
-
                     }
                 });
             });
