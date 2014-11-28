@@ -9,11 +9,16 @@ var fs = require("fs"),
     logger = require("../src/logger.js"),
     projectPath = path.resolve(),
     schemaValidator = require("JSV").JSV,
-    schemaValidatorEnv = schemaValidator.createEnvironment();
+    schemaValidatorEnv = schemaValidator.createEnvironment(),
+
+    Larry; // fn
 
 //Main class "larry" definition.
 
-var larry = function (config, schema) {
+/**
+ * @constructor
+ */
+Larry = function (config, schema) {
     /*
      * Constructor method
      * Things this will do:
@@ -22,20 +27,17 @@ var larry = function (config, schema) {
      * 3. Verify if the output path is valid
      *
      */
-
     var self = this,
         constructorReturnCode,
         schemaValidatorLog;
 
     //Initializing config and schema
-
     self.config = config;
     self.schema = JSON.parse(schema);
 
     schemaValidatorLog = schemaValidatorEnv.validate(self.config, self.schema);
 
     //1. Reporting schema validation results
-
     if (schemaValidatorLog.errors.length === 0) {
         logger.log("  ✔ ︎basic schema validation passed");
     }
@@ -44,14 +46,12 @@ var larry = function (config, schema) {
         logger.log(schemaValidatorLog.errors);
 
         //Exit code 1, indicating error and stopping further execution
-
         constructorReturnCode = 1;
         this.constructorReturnCode = constructorReturnCode;
         return constructorReturnCode;
     }
 
     //2. Checking if input path exists
-
     if (fs.existsSync(path.join(projectPath, self.config.options.input))) {
         logger.log("  ✔ v input path " + path.join(projectPath, self.config.options.input));
     }
@@ -63,7 +63,6 @@ var larry = function (config, schema) {
     }
 
     //3. Checking if output path exists
-
     if (fs.existsSync(path.join(projectPath, self.config.options.output))) {
         logger.log("  ✔ valid output path " + path.join(projectPath, self.config.options.output));
     }
@@ -78,7 +77,7 @@ var larry = function (config, schema) {
 
 //API definitions for the class "larry"
 
-larry.prototype = {
+Larry.prototype = {
     verifyComponents: function () {
 
         /*
@@ -107,8 +106,8 @@ larry.prototype = {
                 return 1;
             }
 
-            //2. Verifying include paths exist and component destinations will be created inside output/packageName/ folder.
-
+            //2. Verifying include paths exist and component destinations will be created inside output/packageName/
+            //folder.
             component.include.forEach(function (includedComponent) {
                 if (fs.existsSync(path.resolve(self.config.options.input, includedComponent))) {
                     logger.log("  ✔ Valid source path " + path.resolve(self.config.options.input, includedComponent));
@@ -120,8 +119,8 @@ larry.prototype = {
             });
 
             //3. Verifying if the component names are all unique
-
-            if (component.name !== undefined && component.name !== "" && (componentsList.indexOf(component.name) == -1)) {
+            if (component.name !== undefined && component.name !== "" &&
+                    (componentsList.indexOf(component.name) == -1)) {
                 componentsList.push(component.name);
             }
             else {
@@ -146,21 +145,17 @@ larry.prototype = {
         logger.log("  ✔ all component names are unique");
 
         //Return 0 for successful verification of components
-
         return 0;
 
     },
 
     verifyPackages: function () {
-
         /*
          * Things this will do:
          * 1. Verify: If the packages names are not null/undefined
          * 2. Verify: If the packages have valid component names
          * 3. Verify: If there are any duplicate/empty package names
-         *
          */
-
         var self = this,
             packages = self.config.packages,
             packagesList = [],
@@ -169,7 +164,6 @@ larry.prototype = {
         packages.forEach(function (package) {
 
             //1. Verifying if package names are valid
-
             if (package.name !== "" && package.name !== undefined) {
                 logger.log("  ✔ package name is valid for " + package.name);
             }
@@ -180,7 +174,6 @@ larry.prototype = {
 
 
             //2. Verifying if packages contain valid component names
-
             package.components.forEach(function (packageComponent) {
                 if (componentsList.indexOf(packageComponent) !== -1) {
                     logger.log("  ✔ Valid component found in " + package.name);
@@ -212,7 +205,6 @@ larry.prototype = {
         logger.log("  ✔ all packages names are unique");
 
         //Return 0 for successful verification of packages
-
         return 0;
 
     },
@@ -231,7 +223,6 @@ larry.prototype = {
          * - If archive is true remove the package folder
          *
          */
-
         var self = this,
             packages = self.config.packages,
             components = self.config.components,
@@ -248,7 +239,6 @@ larry.prototype = {
 
 
         //Loop through enabled packages
-
         packages.forEach(function (package) {
             var destinationRoot,
                 zipPackage,
@@ -295,10 +285,10 @@ larry.prototype = {
                         }
 
                         if (componentEnabled === false) {
-                            logger.log("  ✘ Disabled component " + component.name + " was used in the package " + package.name);
+                            logger.log("  ✘ Disabled component " + component.name + " was used in the package " +
+                                package.name);
                             return 1;
                         }
-
 
                         if (component.excludePattern !== undefined) {
                             excludePattern = component.excludePattern;
@@ -338,7 +328,7 @@ larry.prototype = {
                             if (fs.lstatSync(source).isDirectory()) {
                                 wrench.copyDirSyncRecursive(source, destination, filterOptions);
                             }
-                            else{
+                            else {
                                 fs.writeFileSync(destination, fs.readFileSync(source));
                             }
 
@@ -348,8 +338,8 @@ larry.prototype = {
                 });
             });
 
-            //Small logical block to check if packaging needs to be done, by default zipPackage is true if not specifically defined in options.
-
+            // Small logical block to check if packaging needs to be done, by default zipPackage is true if not
+            // specifically defined in options.
             if (typeof self.config.options.archive === "undefined") {
                 if (typeof package.archive === "undefined") {
                     zipPackage = true;
@@ -379,9 +369,11 @@ larry.prototype = {
 
                 archive.on("end", onArchive(self.config.options.output, package.name));
                 archive.pipe(output);
-                archive.bulk([
-                    { expand: true, cwd: path.resolve(self.config.options.output, package.name), src: ["**"]}
-                ]);
+                archive.bulk([{
+                    expand: true,
+                    cwd: path.resolve(self.config.options.output, package.name),
+                    src: ["**"]
+                }]);
                 archive.finalize();
                 logger.log("  ✔ package created and archived " + package.name);
             }
@@ -391,14 +383,9 @@ larry.prototype = {
         });
 
         //Return 0 when packaging is done
-
         return 0;
-
     }
-
-
 };
 
-larry.prototype.constructor = larry;
-module.exports = larry;
-
+Larry.prototype.constructor = Larry;
+module.exports = Larry;
